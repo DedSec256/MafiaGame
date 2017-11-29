@@ -1,0 +1,46 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<UserSettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BOT_Platform.Properties" GeneratedClassName="UserSettings">
+  <Profiles />
+  <UserSettings>
+    <Setting Name="UserSettingsTemplateUserBot" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">[LOGIN]	   
+[PASSWORD] 
+[APP_ID]  	$id приложения $
+
+[MCOUNT]    $максимальное количество сообщений, принимаемое ботом за раз$
+[MTOFF]   	$максимальный период приянытх сообщений$
+
+[PAUSE]     1000
+[BNAME]     бот, Бот
+[BMESMEM]   30
+
+[ADMIN_LIST] 
+[ALLOWED_COM] ALL 
+$
+ALL - все команды в платформе
+EXCEPT: команды * через запятую - все команды, кроме *
+ONLY: команды * через запятую   - только команды *
+$</Value>
+    </Setting>
+    <Setting Name="UserSettingsTemplateGroupBot" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">[TOKEN]
+[APP_ID]   	$id приложения $
+
+[PAUSE]     1000
+[MCOUNT]    50	  	$максимальное количество сообщений, принимаемое ботом за раз$
+[MTOFF]     15		$максимальный период приянытх сообщений$
+
+[BNAME] бот,Бот
+[BMESMEM]  30
+
+[ADMIN_LIST]
+[ALLOWED_COM]
+ALL 
+$
+ALL - все команды в платформе
+EXCEPT: команды* через запятую - все команды, кроме *
+ONLY: команды* через запятую   - только команды *
+$ </Value>
+    </Setting>
+  </UserSettings>
+</UserSettingsFile>
