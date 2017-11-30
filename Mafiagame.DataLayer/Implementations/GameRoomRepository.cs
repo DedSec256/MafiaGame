@@ -23,27 +23,18 @@ namespace MafiaGame.DataLayer.Implementations
             using (var db = new DataContext(_connectionString))
             {
                 var checkGame = (from g in db.GetTable<GameRoom>()
-                    where g.Id == room.Id
-                    select g).FirstOrDefault();
+                                 where g.Id == room.Id select g).FirstOrDefault();
 
                 if (checkGame != default(GameRoom))
                 {
                     throw new ArgumentException($"Игра уже была создана. ");
                 }
 
-                var gameRoom = new GameRoom()
-                {
-                    Id = room.Id,
-                    ActiveRoles = room.ActiveRoles,
-                    MaxPlayers = room.MaxPlayers,
-                    Name = room.Name,
-                    Players = room.Players
-                };
                 AddPlayersGames(room.Players, room.Id);
 
-                db.GetTable<GameRoom>().InsertOnSubmit(gameRoom);
+                db.GetTable<GameRoom>().InsertOnSubmit(room);
                 db.SubmitChanges();
-                return gameRoom;
+                return room;
             }
         }
 

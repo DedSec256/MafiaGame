@@ -237,11 +237,7 @@
       <Project>{a32894ed-3808-4303-9153-d56b8a8a9c9d}</Project>
       <Name>MafiaGame.DataLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MafiaGame\MafiaGame.GameProcess.csproj">
-      <Project>{eec5c986-0748-4f49-af4c-5b5a3d4688a2}</Project>
-      <Name>MafiaGame.GameProcess</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Structures\MafiaGame.Structures.csproj">
+    <ProjectReference Include="..\Mafiagame.Structures\MafiaGame.Structures.csproj">
       <Project>{b527cdc7-3601-4513-9b81-4c44e45bbfe4}</Project>
       <Name>MafiaGame.Structures</Name>
     </ProjectReference>

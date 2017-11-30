@@ -68,7 +68,7 @@
       <Project>{a32894ed-3808-4303-9153-d56b8a8a9c9d}</Project>
       <Name>MafiaGame.DataLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Structures\MafiaGame.Structures.csproj">
+    <ProjectReference Include="..\Mafiagame.Structures\MafiaGame.Structures.csproj">
       <Project>{B527CDC7-3601-4513-9B81-4C44E45BBFE4}</Project>
       <Name>MafiaGame.Structures</Name>
     </ProjectReference>
