@@ -14,37 +14,31 @@ using MafiaGame.DataLayer.Models;
 
 namespace Mafiagame.DataLayer.Implementations
 {
-    public class PlayersRoomsRepository : IPlayersRoomsRepository
+    public class PlayersGamesRepository : IPlayersGamesRepository
     {
         private readonly string _connectionString;
 
-        public PlayersRoomsRepository(string connectionString)
+        public PlayersGamesRepository(string connectionString)
         {
             _connectionString = connectionString;
         }
 
-        public PlayersRooms Create(User user, string role)
+        public PlayerGame Create(PlayerGame game)
         {
             using (var db = new DataContext(_connectionString))
             {
-                var checkPlayersRooms = (from r in db.GetTable<PlayersRooms>()
-                    where r.UserId == user.Id
+                var checkPlayersRooms = (from r in db.GetTable<PlayerGame>()
+                    where r.UserId == game.UserId
                     select r).FirstOrDefault();
 
-                if (checkPlayersRooms != default(PlayersRooms))
+                if (checkPlayersRooms != default(PlayerGame))
                 {
-                    throw new ArgumentException($"Пользователь с id ({user.Id}) уже играет в другой комнате.");
+                    throw new ArgumentException($"Пользователь с id ({game.UserId}) уже играет в другой комнате.");
                 }
 
-                var PlayersRooms = new PlayersRooms()
-                {
-                    UserId = user.Id,
-                    GameId = user.ActiveGameId.Value,
-                    Role = role
-                };
-                db.GetTable<PlayersRooms>().InsertOnSubmit(PlayersRooms);
+                db.GetTable<PlayerGame>().InsertOnSubmit(game);
                 db.SubmitChanges();
-                return PlayersRooms;
+                return game;
             }
         }
 
@@ -55,9 +49,8 @@ namespace Mafiagame.DataLayer.Implementations
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    //command.CommandText = "delete from ListOfPlayersRoomss where id = @id";
-
-                    //command.Parameters.AddWithValue("@id", id);
+                    command.CommandText = "delete from PlayersGames where UserId = @id";
+                    command.Parameters.AddWithValue("@id", userId);
 
                     command.ExecuteNonQuery();
 
@@ -66,50 +59,40 @@ namespace Mafiagame.DataLayer.Implementations
             }
         }
 
-        public PlayersRooms Get(long userId)
+        public PlayerGame Get(long userId)
         {
             using (var db = new DataContext(_connectionString))
             {
-
-                var playersRooms = (from r in db.GetTable<PlayersRooms>()
+                var playersRooms = (from r in db.GetTable<PlayerGame>()
                     where r.UserId == userId
                     select r).FirstOrDefault();
 
-                if (playersRooms == default(PlayersRooms))
-                    throw new ArgumentException($"Пользователь с id {userId} сейчас не участвует ни в одной из игр");
+                if (playersRooms == default(PlayerGame))
+                    throw new ArgumentException($"Пользователь с id {userId} не участвует ни в одной из игр");
 
                 return playersRooms;
             }
         }
 
-        public IEnumerable<PlayersRooms> GetAll()
+        public IEnumerable<PlayerGame> GetAll()
         {
             using (var db = new DataContext(_connectionString))
             {
-                return db.GetTable<PlayersRooms>().Select(u => u).ToArray();
+                return db.GetTable<PlayerGame>().Select(u => u).ToArray();
             }
         }
 
-        public PlayersRooms UpdatePlayerRoom(PlayersRooms playerRoom)
+        public void UpdatePlayerGame(PlayerGame game)
         {
             using (var db = new DataContext(_connectionString))
             {
-                var playerRoomFromDb = (from u in db.GetTable<PlayersRooms>()
-                    where u.UserId == playerRoom.UserId
+                var playerRoomFromDb = (from u in db.GetTable<PlayerGame>()
+                    where u.UserId == game.UserId
                     select u).FirstOrDefault();
 
-                if (playerRoomFromDb == default(PlayersRooms))
-                    throw new ArgumentException($"Пользователь с id {playerRoom.UserId} сейчас не участвует ни в одной из игр");
-
-                UpdatePlayersRoomsContent(playerRoom, playerRoomFromDb);
+                playerRoomFromDb.Role = game.Role;
                 db.SubmitChanges();
-                return playerRoomFromDb;
             }
-        }
-
-        private void UpdatePlayersRoomsContent(PlayersRooms sourcePlayersRooms, PlayersRooms destinationPlayersRooms)
-        {
-            destinationPlayersRooms.Role = sourcePlayersRooms.Role;
         }
     }
 }

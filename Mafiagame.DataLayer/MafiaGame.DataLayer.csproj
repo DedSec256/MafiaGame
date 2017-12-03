@@ -62,6 +62,9 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -74,11 +77,11 @@
     <Compile Include="Implementations\Logger.cs" />
     <Compile Include="Implementations\PlayersGamesRepository.cs" />
     <Compile Include="Interfaces\IGameRoomRepository.cs" />
-    <Compile Include="Interfaces\IPlayersRoomsRepository.cs" />
+    <Compile Include="Interfaces\IPlayersGamesRepository.cs" />
     <Compile Include="Interfaces\IUserRepository.cs" />
     <Compile Include="Models\GameRoom.cs" />
     <Compile Include="Models\GameRoomCreation.cs" />
-    <Compile Include="Models\PlayersRooms.cs" />
+    <Compile Include="Models\PlayerGame.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="NinjectKernel\LogInterceptorAttribute.cs" />
     <Compile Include="NinjectKernel\LogNinjectModule.cs" />

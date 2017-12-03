@@ -8,12 +8,12 @@ using MafiaGame.DataLayer.Models;
 
 namespace Mafiagame.DataLayer.Interfaces
 {
-    public interface IPlayersRoomsRepository
+    public interface IPlayersGamesRepository
     { 
-        PlayersRooms Create(User user, string role);
+        PlayerGame Create(PlayerGame game);
         void Delete(long userId);
-        PlayersRooms Get(long userId);
-        IEnumerable<PlayersRooms> GetAll();
-        PlayersRooms UpdatePlayerRoom(PlayersRooms room);
+        PlayerGame Get(long userId);
+        IEnumerable<PlayerGame> GetAll();
+        void UpdatePlayerGame(PlayerGame game);
     }
 }

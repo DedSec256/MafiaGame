@@ -97,7 +97,7 @@ namespace TelegramBot.Modules
             else if(buttonText.StartsWith("✅"))
             {
                 user.GameRoomCreation
-                    .DeleteRole(buttonText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[2]);
+                    .RemoveRole(buttonText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[2]);
             }
 
             new RolesListGenerator(user.GameRoomCreation.Roles).GenerateMenu()

@@ -18,7 +18,8 @@ namespace MafiaGame.ServerApi.Controllers
     public class GameRoomsController : ApiController
     {
         private IGameRoomRepository _gameRoomsRepository;
-        private const string ConnectionString = @"Data Source=.;Initial Catalog=MafiaGame;Integrated Security=true";
+        private const string ConnectionString = 
+            @"Data Source=.;Initial Catalog=MafiaGame;Integrated Security=true";
 
         public GameRoomsController()
         {
@@ -82,20 +83,15 @@ namespace MafiaGame.ServerApi.Controllers
             }
         }
 
-        /// <summary>
-        /// Обновление данных о пользователе
-        /// </summary>
-        /// <param name="GameRoom">Новые данные пользователя</param>
-        /// <returns></returns>
-        [HttpPut]
-        [Route("api/game/update")]
+        [HttpDelete]
+        [Route("api/game/{id}/players/{playerId}/remove")] 
         [ArgumentExceptionFilter]
-        public GameRoom Update([FromBody] GameRoom GameRoom)
+        public GameRoom RemovePlayer(long id, [FromBody]long playerId)
         {
             // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoom.Name);
             try
             {
-                return _gameRoomsRepository.UpdateGameRoom(GameRoom);
+                return _gameRoomsRepository.RemovePlayer(id, playerId);
             }
             catch (ArgumentException e)
             {
@@ -103,5 +99,64 @@ namespace MafiaGame.ServerApi.Controllers
                 throw new ArgumentException(e.Message);
             }
         }
+
+        [HttpGet]
+        [Route("api/game/{id}/players")]
+        [ArgumentExceptionFilter]
+        public IEnumerable<Role> GetPlayers(long id)
+        {
+            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoom.Name);
+            try
+            {
+                return _gameRoomsRepository.Get(id).Players;
+            }
+            catch (ArgumentException e)
+            {
+                //Logger.Log.Instance.Error(e.Message);
+                throw new ArgumentException(e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/game/{id}/players/add")]
+        [ArgumentExceptionFilter]
+        public GameRoom AddPlayer(long id, [FromBody] JsonRole role)
+        {
+            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoom.Name);
+            try
+            {
+                return _gameRoomsRepository.AddPlayer(new PlayerGame(){
+                    GameId = id, Role = role.Role, UserId = role.UserId});
+            }
+            catch (ArgumentException e)
+            {
+                //Logger.Log.Instance.Error(e.Message);
+                throw new ArgumentException(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Обновление данных о пользователе
+        /// </summary>
+        /// <param name="GameRoom">Новые данные пользователя</param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("api/game/{id}/delete")]
+        [ArgumentExceptionFilter]
+        public void Delete(long gameId)
+        {
+            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoom.Name);
+            try
+            {
+                _gameRoomsRepository.Delete(gameId);
+            }
+            catch (ArgumentException e)
+            {
+                //Logger.Log.Instance.Error(e.Message);
+                throw new ArgumentException(e.Message);
+            }
+        }
+
+
     }
 }

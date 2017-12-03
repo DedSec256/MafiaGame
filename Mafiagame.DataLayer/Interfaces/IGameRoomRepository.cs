@@ -14,8 +14,9 @@ namespace MafiaGame.DataLayer.Interfaces
         void Delete(long gameId);
         GameRoom Get(long gameId);
         IEnumerable<GameRoom> GetAll();
-        GameRoom UpdateGameRoom(GameRoom gameRoom);
-        void AddPlayersGames(IEnumerable<Role> players, long gameId);
-        void UpdatePlayersGames(IEnumerable<Role> players, long gameId);
+        GameRoom AddPlayer(PlayerGame game);
+        GameRoom RemovePlayer(long gameId, long userId);
+        IEnumerable<PlayerGame> GetGamePlayers(long gameId);
+
     }
 }

@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiaGame.TelegramBot", "Ma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiaGame.GameProcess", "MafiaGame.GameProcess\MafiaGame.GameProcess.csproj", "{EEC5C986-0748-4F49-AF4C-5B5A3D4688A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiaGame.DataLayer.Tests", "MafiaGame.DataLayer.Tests\MafiaGame.DataLayer.Tests.csproj", "{A75A9DD7-B7AD-4C51-9F61-943AD65A9319}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,14 @@ Global
 		{EEC5C986-0748-4F49-AF4C-5B5A3D4688A2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EEC5C986-0748-4F49-AF4C-5B5A3D4688A2}.Release|x64.ActiveCfg = Release|Any CPU
 		{EEC5C986-0748-4F49-AF4C-5B5A3D4688A2}.Release|x64.Build.0 = Release|Any CPU
+		{A75A9DD7-B7AD-4C51-9F61-943AD65A9319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A75A9DD7-B7AD-4C51-9F61-943AD65A9319}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A75A9DD7-B7AD-4C51-9F61-943AD65A9319}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A75A9DD7-B7AD-4C51-9F61-943AD65A9319}.Debug|x64.Build.0 = Debug|Any CPU
+		{A75A9DD7-B7AD-4C51-9F61-943AD65A9319}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A75A9DD7-B7AD-4C51-9F61-943AD65A9319}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A75A9DD7-B7AD-4C51-9F61-943AD65A9319}.Release|x64.ActiveCfg = Release|Any CPU
+		{A75A9DD7-B7AD-4C51-9F61-943AD65A9319}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

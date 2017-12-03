@@ -17,10 +17,16 @@ namespace MafiaGame.DataLayer.Models
         Dead
     }
 
+    public class JsonRole
+    {
+        public string Role { get; set; }
+        public long UserId { get; set; }
+    }
+
     public abstract class Role
     {
-        public readonly Roles _role;
-        public readonly long _user;
+        public Roles _role { get; set; }
+        public long _user { get; set; }
 
         protected Role(Roles role, long user)
         {
@@ -124,7 +130,7 @@ namespace MafiaGame.DataLayer.Models
 
     public static class RoleFactory
     {
-        public static Role GetRole(PlayersRooms playerRoom)
+        public static Role GetRole(PlayerGame playerRoom)
         {
             Roles.TryParse(playerRoom.Role, out Roles role);
 
@@ -164,6 +170,11 @@ namespace MafiaGame.DataLayer.Models
                     return "🔪";
             }
             return "❌";
+        }
+
+        public static JsonRole ToJson(this Role role)
+        {
+            return new JsonRole() {Role = role._role.ToString(), UserId = role._user};
         }
     }
 }

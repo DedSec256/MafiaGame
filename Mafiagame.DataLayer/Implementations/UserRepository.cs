@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MafiaGame;
 using MafiaGame.DataLayer;
 using System.Data.Linq;
+using MafiaGame.DataLayer.Implementations;
 using MafiaGame.DataLayer.Interfaces;
 using MafiaGame.DataLayer.Models;
 
@@ -19,6 +20,8 @@ namespace Mafiagame.DataLayer.Implementations
         public UserRepository(string connectionString)
         {
             _connectionString = connectionString;
+            GameRoomRepository.UserExitGame += UserExitGameHandler;
+            GameRoomRepository.UserEnterGame += UserEnterGameHandler;
         }
 
         public User Create(long id)
@@ -31,7 +34,7 @@ namespace Mafiagame.DataLayer.Implementations
 
                 if (checkUser != default(User))
                 {
-                    throw new ArgumentException($"Пользователь с id ({id}) уже существует.");
+                    throw new ArgumentException($"Пользователь с id ({id}) уже существует");
                 }
 
                 var user = new User()
@@ -52,10 +55,8 @@ namespace Mafiagame.DataLayer.Implementations
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    //command.CommandText = "delete from ListOfUsers where id = @id";
-
-                    //command.Parameters.AddWithValue("@id", id);
-
+                    command.CommandText = "delete from Users where Id = @id";
+                    command.Parameters.AddWithValue("@id", userId);
                     command.ExecuteNonQuery();
 
                    // NLogger.Logger.Trace("База данных:удалено из таблицы:{0}:где UserID:{1}", "[ListOfUsers]", id);
@@ -66,7 +67,6 @@ namespace Mafiagame.DataLayer.Implementations
         {
             using (var db = new DataContext(_connectionString))
             {
-
                 var user = (from u in db.GetTable<User>()
                     where u.Id == userId
                     select u).FirstOrDefault();
@@ -86,24 +86,27 @@ namespace Mafiagame.DataLayer.Implementations
             }
         }
 
-        public User UpdateUser(User user)
+        public void UserEnterGameHandler(object sender, (long userId, long gameId) args)
         {
             using (var db = new DataContext(_connectionString))
             {
-                var userFromDb = (from u in db.GetTable<User>()
-                                  where u.Id == user.Id
-                                  select u).FirstOrDefault();
-                if (userFromDb == default(User))
-                    throw new ArgumentException($"Пользователь с id {user.Id} не найден");
+                var user = Get(args.userId);
+                user.ActiveGameId = args.gameId;
 
-                UpdateUserContent(user, userFromDb);
                 db.SubmitChanges();
-                return userFromDb;
             }
         }
-        private void UpdateUserContent(User sourceUser, User destinationUser)
+
+        public void UserExitGameHandler(object sender, long userId)
         {
-            destinationUser.ActiveGameId = sourceUser.ActiveGameId;
+            using (var db = new DataContext(_connectionString))
+            {
+                var user = Get(userId);
+                user.ActiveGameId = null;
+
+                db.SubmitChanges();
+            }
         }
+
     }
 }

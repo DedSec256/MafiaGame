@@ -8,14 +8,14 @@ using MafiaGame.DataLayer.Models;
 
 namespace Mafiagame.DataLayer.Models
 {
-    [Table(Name = "PlayersRooms")]
-    public class PlayersRooms
+    [Table(Name = "PlayersGames")]
+    public class PlayerGame
     {
         [Column(IsPrimaryKey = true)]
-        public long UserId;
+        public long UserId { get; set; }
         [Column]
-        public long GameId;
+        public long GameId { get; set; }
         [Column]
-        public string Role;
+        public string Role { get; set; }
     }
 }

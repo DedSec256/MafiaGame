@@ -21,7 +21,7 @@ namespace Mafiagame.DataLayer.Models
             if (!Roles.Contains(role)) Roles += role;
         }
 
-        public void DeleteRole(string role)
+        public void RemoveRole(string role)
         {
             if (Roles.Contains(role)) Roles = Roles.Replace(role, "");
         }

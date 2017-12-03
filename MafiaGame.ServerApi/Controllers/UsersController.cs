@@ -83,6 +83,27 @@ namespace MafiaGame.ServerApi.Controllers
         }
 
         /// <summary>
+        /// Получение пользователя по уникальному идентификатору
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя</param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("api/users/{id}/delete")]
+        [ArgumentExceptionFilter]
+        public void Delete(long id)
+        {
+            try
+            {
+                _userRepository.Delete(id);
+            }
+            catch (ArgumentException e)
+            {
+                //Logger.Log.Instance.Error(e.Message);
+                throw new ArgumentException(e.Message);
+            }
+        }
+
+        /// <summary>
         /// Получение активной сессии пользователя
         /// </summary>
         /// <param name="id">Идентификатор пользователя</param>
@@ -92,27 +113,6 @@ namespace MafiaGame.ServerApi.Controllers
         public long? GetUserActivaGame(long id)
         {
             return _userRepository.Get(id).ActiveGameId;
-        }
-        /// <summary>
-        /// Обновление данных о пользователе
-        /// </summary>
-        /// <param name="user">Новые данные пользователя</param>
-        /// <returns></returns>
-        [HttpPut]
-        [Route("api/user/update")]
-        [ArgumentExceptionFilter]
-        public User Update([FromBody] User user)
-        {
-           // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", user.Name);
-            try
-            {
-                return _userRepository.UpdateUser(user);
-            }
-            catch (ArgumentException e)
-            {
-                //Logger.Log.Instance.Error(e.Message);
-                throw new ArgumentException(e.Message);
-            }
         }
     }
 }

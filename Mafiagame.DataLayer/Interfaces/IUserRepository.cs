@@ -13,6 +13,10 @@ namespace MafiaGame.DataLayer.Interfaces
         void Delete(long userId);
         User Get(long userId);
         IEnumerable<User> GetAll();
-        User UpdateUser(User user);
+
+        /* Пользователь вышел из игры */
+        void UserExitGameHandler(object sender, long userId);
+        /* Пользователь вошёл в игровую комнату */
+        void UserEnterGameHandler(object sender, (long userId, long gameId) args);
     }
 }
