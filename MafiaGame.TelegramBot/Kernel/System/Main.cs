@@ -1,6 +1,4 @@
-﻿//удалять из спмска пользователей тех, кто в бане
-
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +6,9 @@ using System.Threading;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
+using TelegramBot.Bot;
 using TelegramBot.Kernel.CIO;
+using TelegramBot.Kernel.System;
 using TelegramBot.Properties;
 
 namespace TelegramBot.Kernel
@@ -26,7 +26,6 @@ namespace TelegramBot.Kernel
             InitalizeConsole();
             Global.InitalizeEnvironment();
             Run();
-
         }
 
         public static void Run()
@@ -79,22 +78,11 @@ namespace TelegramBot.Kernel
         /// </summary>
         private static void ConsoleCommander()
         {
-            var timer = new System.Timers.Timer(Global.Settings.SAVE_TIME);
-            timer.Elapsed += Timer_Elapsed;
-            timer.Start();
-
             /* Обрабатываем команды, поступающие в консоль */
             while (true)
             {
                 BotConsole.StartReading();
             }
-        }
-
-        private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            BotConsole.Write("Сохранение пользователей...", MessageType.Info);
-            UserDatabase.SaveUsers();
-            BotConsole.Write("Пользователи успешно сохранены", MessageType.Info);
         }
 
         /// <summary>
@@ -120,56 +108,6 @@ namespace TelegramBot.Kernel
         }
     }
 
-    public static class Global
-    {
-        public static Settings Settings { get; private set; }
-        public const string DIRECTORY_PATH = "Data";
-        private static readonly string SETTINGS_FILENAME;
-
-        public static void InitalizeEnvironment()
-        {
-            try
-            {
-                if (!File.Exists(SETTINGS_FILENAME))
-                {
-                    using (StreamWriter writer = new StreamWriter(SETTINGS_FILENAME, false, Encoding.UTF8))
-                    {
-                        writer.Write(Resources.SettingsTemplate);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                BotConsole.Write("Ошибка при инициализации программы:\n" + ex.Message, MessageType.Warning);
-                Thread.Sleep(5000);
-                Environment.Exit(-1);
-            }
-            ReadSettings();
-        }
-        private static void ReadSettings()
-        {
-            Settings = Settings.ReadFrom(SETTINGS_FILENAME);
-        }
-
-        static Global()
-        {
-            ConsoleEventHooker.Closed += ConsoleEventHooker_Closed;
-            SETTINGS_FILENAME = Path.Combine(DIRECTORY_PATH, "settings.ini");
-
-            UserDatabase.LoadUsers();
-        }
-
-        private static void ConsoleEventHooker_Closed(object sender, EventArgs e)
-        {
-            UserDatabase.SaveUsers();
-        }
-
-
-
-
-    }
-
-    
 
 }
 

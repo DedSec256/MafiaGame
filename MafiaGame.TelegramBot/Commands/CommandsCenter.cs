@@ -8,6 +8,7 @@ using NLog.Config;
 using Telegram.Bot;
 using TelegramBot.Kernel;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineKeyboardButtons;
 using TelegramBot.Kernel.CIO;
 using TelegramBot.Kernel.Interfaces;
@@ -111,12 +112,15 @@ namespace TelegramBot.Kernel.Standart
             {
                 if (ReplyButtons.TryGetValue(message.Text, out ReplyButton button))
                 {
-                    button.Callback.Execute(message, bot, arg);
+                    await Task.Run(() =>
+                     {
+                         button.Callback.Execute(message, bot, arg);
+                     });
                 }
                 else
                 {
                     await CommandsCenter.GetMenu("StartMenu")
-                        .ShowAsync(message.Chat.Id, bot, Global.Settings.MAIN_MENU_TEXT);
+                        .ShowAsync(message.Chat.Id, bot, "инфо");
                 }
             }
             catch
@@ -124,15 +128,21 @@ namespace TelegramBot.Kernel.Standart
                 //TODO:
             }
         }
-        public static void TryInlineCommand(string callback, Message message, TelegramBotClient bot, object arg = null)
+        public static async void TryInlineCommand(string callback, Message message, TelegramBotClient bot, object arg = null)
         {
             if (InlineButtons.TryGetValue(callback, out InlineButton button))
             {
-                button.Callback.Execute(message, bot, arg);
+                await Task.Run(() =>
+                {
+                    button.Callback.Execute(message, bot, arg);
+                });
             }
             else
             {
-                //TODO: throw?
+                
+               bot.ShowAnswerMessage((arg as CallbackQuery).Id, "Данное меню устарело :c");
+               await bot.EditMessageTextAsync(message.Chat.Id, message.MessageId, "*данное меню устарело :c*",
+                    ParseMode.Markdown);
             }
         }
 

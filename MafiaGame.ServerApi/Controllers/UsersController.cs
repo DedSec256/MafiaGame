@@ -26,7 +26,7 @@ namespace MafiaGame.ServerApi.Controllers
         }
 
         [HttpPost]
-        [Route("api/user/register")]
+        [Route("api/users/register")]
         [ArgumentExceptionFilter]
         public User Create([FromBody] long userId)
         {
@@ -40,6 +40,7 @@ namespace MafiaGame.ServerApi.Controllers
                 throw new ArgumentException(e.Message);
             }
         }
+
         /// <summary>
         /// Получение пользователя по уникальному идентификатору
         /// </summary>
@@ -101,18 +102,6 @@ namespace MafiaGame.ServerApi.Controllers
                 //Logger.Log.Instance.Error(e.Message);
                 throw new ArgumentException(e.Message);
             }
-        }
-
-        /// <summary>
-        /// Получение активной сессии пользователя
-        /// </summary>
-        /// <param name="id">Идентификатор пользователя</param>
-        /// <returns>Группы пользователя</returns>
-        [HttpGet]
-        [Route("api/users/{id}/game")]
-        public long? GetUserActivaGame(long id)
-        {
-            return _userRepository.Get(id).ActiveGameId;
         }
     }
 }

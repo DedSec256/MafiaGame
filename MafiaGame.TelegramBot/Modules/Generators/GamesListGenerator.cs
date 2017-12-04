@@ -7,6 +7,7 @@ using Mafiagame.DataLayer.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InlineKeyboardButtons;
+using TelegramBot.Kernel;
 using TelegramBot.Kernel.Interfaces;
 using TelegramBot.Kernel.Models;
 using TelegramBot.Kernel.Standart;
@@ -30,16 +31,10 @@ namespace TelegramBot.Modules.Generators
             {
                 keyboard[i++] = new InlineKeyboardButton[]
                 {
-                    CommandsCenter.Add(new InlineButton($"{game.Name}|{game.ActiveRoles}|{"0/" + game.MaxPlayers}",
-                        game.Id.ToString(), EnterRoomCallback)).Button
+                    CommandsCenter.GetInlineButton(game.Id.ToString()).Button
                 };
             }
             return new InlineMenu("", keyboard);
-        }
-
-        private void EnterRoomCallback(Message message, TelegramBotClient Bot, object arg)
-        {
-            throw new NotImplementedException();
         }
     }
 }

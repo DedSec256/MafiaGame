@@ -150,11 +150,6 @@ namespace TelegramBot.Kernel.Interfaces
         {
             return new InlineCallback(callback, butName);
         }
-
-        public static T FromJSON<T>(this string content)
-        {
-            return JsonConvert.DeserializeObject<T>(content);
-        }
     }
 
     

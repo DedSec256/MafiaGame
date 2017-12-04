@@ -1,8 +1,8 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<UserSettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BOT_Platform.Properties" GeneratedClassName="UserSettings">
+<UserBotSettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BOT_Platform.Properties" GeneratedClassName="UserBotSettings">
   <Profiles />
-  <UserSettings>
-    <Setting Name="UserSettingsTemplateUserBot" Type="System.String" Scope="Application">
+  <UserBotSettings>
+    <Setting Name="UserBotSettingsTemplateUserBot" Type="System.String" Scope="Application">
       <Value Profile="(Default)">[LOGIN]	   
 [PASSWORD] 
 [APP_ID]  	$id приложения $
@@ -22,7 +22,7 @@ EXCEPT: команды * через запятую - все команды, кр
 ONLY: команды * через запятую   - только команды *
 $</Value>
     </Setting>
-    <Setting Name="UserSettingsTemplateGroupBot" Type="System.String" Scope="Application">
+    <Setting Name="UserBotSettingsTemplateGroupBot" Type="System.String" Scope="Application">
       <Value Profile="(Default)">[TOKEN]
 [APP_ID]   	$id приложения $
 
@@ -42,5 +42,5 @@ EXCEPT: команды* через запятую - все команды, кр�
 ONLY: команды* через запятую   - только команды *
 $ </Value>
     </Setting>
-  </UserSettings>
-</UserSettingsFile>
+  </UserBotSettings>
+</UserBotSettingsFile>

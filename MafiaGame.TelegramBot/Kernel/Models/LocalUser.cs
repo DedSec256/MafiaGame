@@ -15,7 +15,6 @@ namespace TelegramBot.Kernel.Models
     public class LocalUser
     {
         public User User { get; }
-        private bool _notSaved = false;
         public GameRoomCreation GameRoomCreation { get; set; }
 
         public (Regex regex, Callback done,
@@ -31,7 +30,7 @@ namespace TelegramBot.Kernel.Models
                     else
                     {
                         await Task.Run(() => CommandsCenter.GetMenu("StartReplyMenu")
-                            .ShowAsync(message.Chat.Id, bot, Global.Settings.MAIN_MENU_TEXT, false));
+                            .ShowAsync(message.Chat.Id, bot, ""));
                     }
                 }
                 ), null);
@@ -42,20 +41,13 @@ namespace TelegramBot.Kernel.Models
             CommandRegex = DefaultRegex;
         }
 
-        public void SetGame(long gameId)
+        public void SetRoom(long? gameId)
         {
-            User.ActiveGameId = gameId;
-            _notSaved = true;
-        }
-
-        public void Save()
-        {
-            try
+            if (gameId != null)
             {
-                if (_notSaved) 
-                    ClientApi.UpdateUser(this.User);
+                GameRoomCreation = null;
             }
-            catch { }
+            User.ActiveGameId = gameId;
         }
     }
 }

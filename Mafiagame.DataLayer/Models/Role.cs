@@ -151,7 +151,27 @@ namespace MafiaGame.DataLayer.Models
             }
             return null;
         }
+        public static Role GetRole(JsonRole playerRole)
+        {
+            Roles.TryParse(playerRole.Role, out Roles role);
 
+            switch (role)
+            {
+                case Roles.Citizen:
+                    return new CitizenRole(playerRole.UserId);
+                case Roles.Comissar:
+                    return new ComissarRole(playerRole.UserId);
+                case Roles.Dead:
+                    return new DeadRole(playerRole.UserId);
+                case Roles.Doctor:
+                    return new DoctorRole(playerRole.UserId);
+                case Roles.Mafia:
+                    return new MafiaRole(playerRole.UserId);
+                case Roles.Maniac:
+                    return new ManiacRole(playerRole.UserId);
+            }
+            return null;
+        }
         public static string GetRoleIcon(this Roles role)
         {
             switch (role)
@@ -171,7 +191,6 @@ namespace MafiaGame.DataLayer.Models
             }
             return "❌";
         }
-
         public static JsonRole ToJson(this Role role)
         {
             return new JsonRole() {Role = role._role.ToString(), UserId = role._user};

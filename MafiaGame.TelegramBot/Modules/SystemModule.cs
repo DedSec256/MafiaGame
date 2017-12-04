@@ -26,7 +26,7 @@ namespace TelegramBot.Modules
 
         public async void QueryAnswerCallback(Message message, TelegramBotClient Bot, object arg = null)
         {
-            await Bot.AnswerCallbackQueryAsync((arg as CallbackQuery).Id , message.Text, true);
+            await Bot.AnswerCallbackQueryAsync(arg as string , message.Text, true);
         }
     }
 }

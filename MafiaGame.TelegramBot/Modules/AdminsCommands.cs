@@ -165,7 +165,7 @@ namespace TelegramBot.Modules
                 VoteSystem.AddUserVote(message.Text, message.Chat.Id);
                 await CommandsCenter.GetMenu("StartReplyMenu").Show(message.Chat.Id, Bot,
                     "*Спасибо, Ваш голос был учтён!*\n\n"
-                    + Global.Settings.MAIN_MENU_TEXT);
+                    + Global.BotSettings.MAIN_MENU_TEXT);
             }
             catch (ArgumentException ex)
             {

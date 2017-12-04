@@ -160,11 +160,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot\BotBehaviour.cs" />
-    <Compile Include="Bot\GameVisitor.cs" />
+    <Compile Include="Bot\BotSettings.cs" />
+    <Compile Include="ClientApi\BaseApi.cs" />
+    <Compile Include="ClientApi\GamesApi.cs" />
+    <Compile Include="ClientApi\UsersApi.cs" />
     <Compile Include="Commands\Callback.cs" />
-    <Compile Include="Kernel\System\ClientApi.cs" />
+    <Compile Include="ClientApi\MafiaGameApi.cs" />
     <Compile Include="Kernel\Models\LocalUser.cs" />
     <Compile Include="Kernel\System\ConsoleCloser.cs" />
+    <Compile Include="Kernel\System\Global.cs" />
     <Compile Include="Kernel\UserDatabase.cs" />
     <Compile Include="Modules\About.cs" />
     <Compile Include="Modules\AddRoles.cs" />
@@ -173,6 +177,7 @@
     <Compile Include="Kernel\Interfaces\IGenerator.cs" />
     <Compile Include="Modules\Generators\RolesListGenerator.cs" />
     <Compile Include="Modules\HelpModule.cs" />
+    <Compile Include="Modules\InGame.cs" />
     <Compile Include="Modules\MainMenu.cs" />
     <Compile Include="Kernel\Models\Buttons.cs" />
     <Compile Include="Kernel\System\BotConsole.cs" />

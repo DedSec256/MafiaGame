@@ -7,17 +7,22 @@ using MafiaGame;
 using MafiaGame.DataLayer.Models;
 using Newtonsoft.Json;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramBot.ClientApi;
 using TelegramBot.Kernel.CIO;
 using TelegramBot.Kernel.Interfaces;
 using TelegramBot.Kernel.Models;
+using TelegramBot.Kernel.Standart;
+using TelegramBot.Modules;
 using MessageType = TelegramBot.Kernel.CIO.MessageType;
 
 namespace TelegramBot.Kernel
 {
     public static class UserDatabase
     {
+        static MafiaService service = MafiaService.Create();
         static volatile Dictionary<long, LocalUser> userDatabase = new Dictionary<long, LocalUser>();
 
         public static void Broadcast(Func<LocalUser, bool> patternPredicate, 
@@ -43,31 +48,16 @@ namespace TelegramBot.Kernel
                 }
             });
         }
-        public static void LoadUsers()
+
+        public static async void LoadUsers()
         {
-            var result = ClientApi.GetAllUsers();
-            var users = result.Result.Content.ReadAsStringAsync().Result.FromJSON<User[]>();
+            var users = await service.Users.GetAllUsersAsync();
 
             foreach (var user in users)
             {
                 try
                 {
                     userDatabase.Add(user.Id, new LocalUser(user));
-                }
-                catch (Exception ex)
-                {
-                    BotConsole.Write(ex.Message, MessageType.Error);
-                }
-            }
-        }
-
-        public static void SaveUsers()
-        {
-            foreach (var user in userDatabase)
-            {
-                try
-                {
-                    user.Value.Save();
                 }
                 catch (Exception ex)
                 {
@@ -85,7 +75,7 @@ namespace TelegramBot.Kernel
             else return null;
         }
 
-        public static bool AddUser(User user)
+        public static bool AddUser(MafiaGame.DataLayer.Models.User user)
         {
             if (!userDatabase.ContainsKey(user.Id))
             {

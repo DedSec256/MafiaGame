@@ -21,6 +21,18 @@ namespace Mafiagame.DataLayer.Models
         public string ActiveRoles { get; set; }
         public IEnumerable<Role> Players { get; set; }
 
+        public GameRoomJson ToJson()
+        {
+            return new GameRoomJson()
+            {
+                ActiveRoles = ActiveRoles,
+                Id = Id,
+                MaxPlayers = MaxPlayers,
+                Name = Name,
+                Players = Players.Select(r => r.ToJson())
+            };
+        }
+
         public static GameRoom CreateGameRoom(GameRoomCreation gameRoom)
         {
             return new GameRoom()
@@ -29,6 +41,31 @@ namespace Mafiagame.DataLayer.Models
                 MaxPlayers = gameRoom.MaxPlayers,
                 Name = gameRoom.Name,
                 ActiveRoles = gameRoom.Roles
+            };
+        }
+    }
+
+    public class GameRoomJson
+    {
+        [Column(IsPrimaryKey = true)]
+        public long Id { get; set; }
+        [Column]
+        public byte MaxPlayers { get; set; }
+        [Column]
+        public string Name { get; set; }
+        [Column]
+        public string ActiveRoles { get; set; }
+        public IEnumerable<JsonRole> Players { get; set; }
+
+        public  GameRoom ToGameRoom()
+        {
+            return new GameRoom()
+            {
+                ActiveRoles = ActiveRoles,
+                Id = Id,
+                MaxPlayers = MaxPlayers,
+                Name = Name,
+                Players = Players.Select(RoleFactory.GetRole)
             };
         }
     }

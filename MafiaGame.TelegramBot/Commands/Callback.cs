@@ -71,12 +71,15 @@ namespace TelegramBot.Kernel
 
         protected override void BeforeExecute(Message message, TelegramBotClient bot, object arg = null)
         {
-            var query = arg as CallbackQuery;
-            string info =
-                $"InlineButton: [{query.Message.Chat.Id}] {query.Message.Chat.FirstName} {query.Message.Chat.LastName} " +
-                $"- {_buttonName} ({query.Message.Date.TimeOfDay})";
+            if (arg is CallbackQuery)
+            {
+                var query = arg as CallbackQuery;
+                string info =
+                    $"InlineButton: [{query.Message.Chat.Id}] {query.Message.Chat.FirstName} {query.Message.Chat.LastName} " +
+                    $"- {_buttonName} ({query.Message.Date.TimeOfDay})";
 
-            BotConsole.Write(info);
+                BotConsole.Write(info);
+            }
         }
         protected override void AfterExecute(Message message, TelegramBotClient bot, object arg = null)
         {

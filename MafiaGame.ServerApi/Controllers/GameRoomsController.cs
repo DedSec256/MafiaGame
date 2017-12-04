@@ -27,13 +27,13 @@ namespace MafiaGame.ServerApi.Controllers
         }
 
         [HttpPost]
-        [Route("api/game/new")]
+        [Route("api/games/create")]
         [ArgumentExceptionFilter]
-        public GameRoom Create([FromBody] GameRoom room)
+        public GameRoomJson Create([FromBody] GameRoom room)
         {
             try
             {
-                return _gameRoomsRepository.Create(room);
+                return _gameRoomsRepository.Create(room).ToJson();
             }
             catch (ArgumentException e)
             {
@@ -47,13 +47,13 @@ namespace MafiaGame.ServerApi.Controllers
         /// <param name="id">Идентификатор игры</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("api/game/{id}")]
+        [Route("api/games/{id}")]
         [ArgumentExceptionFilter]
-        public GameRoom Get(long id)
+        public GameRoomJson Get(long id)
         {
             try
             {
-                return _gameRoomsRepository.Get(id);
+                return _gameRoomsRepository.Get(id).ToJson();
             }
             catch (ArgumentException e)
             {
@@ -70,28 +70,11 @@ namespace MafiaGame.ServerApi.Controllers
         [HttpGet]
         [Route("api/games")]
         [ArgumentExceptionFilter]
-        public IEnumerable<GameRoom> GetAll()
+        public IEnumerable<GameRoomJson> GetAll()
         {
             try
             {
-                return _gameRoomsRepository.GetAll();
-            }
-            catch (ArgumentException e)
-            {
-                //Logger.Log.Instance.Error(e.Message);
-                throw new ArgumentException(e.Message);
-            }
-        }
-
-        [HttpDelete]
-        [Route("api/game/{id}/players/{playerId}/remove")] 
-        [ArgumentExceptionFilter]
-        public GameRoom RemovePlayer(long id, [FromBody]long playerId)
-        {
-            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoom.Name);
-            try
-            {
-                return _gameRoomsRepository.RemovePlayer(id, playerId);
+                return _gameRoomsRepository.GetAll().Select(g => g.ToJson());
             }
             catch (ArgumentException e)
             {
@@ -101,11 +84,28 @@ namespace MafiaGame.ServerApi.Controllers
         }
 
         [HttpGet]
-        [Route("api/game/{id}/players")]
+        [Route("api/games/{id}/players/{playerId}/delete")] 
+        [ArgumentExceptionFilter]
+        public GameRoomJson RemovePlayer(long id, [FromBody]long playerId)
+        {
+            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoomJson.Name);
+            try
+            {
+                return _gameRoomsRepository.RemovePlayer(id, playerId).ToJson();
+            }
+            catch (ArgumentException e)
+            {
+                //Logger.Log.Instance.Error(e.Message);
+                throw new ArgumentException(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("api/games/{id}/players")]
         [ArgumentExceptionFilter]
         public IEnumerable<Role> GetPlayers(long id)
         {
-            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoom.Name);
+            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoomJson.Name);
             try
             {
                 return _gameRoomsRepository.Get(id).Players;
@@ -117,16 +117,16 @@ namespace MafiaGame.ServerApi.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("api/game/{id}/players/add")]
+        [HttpGet]
+        [Route("api/games/{id}/players/add")]
         [ArgumentExceptionFilter]
-        public GameRoom AddPlayer(long id, [FromBody] JsonRole role)
+        public GameRoomJson AddPlayer(long id, [FromBody] JsonRole role)
         {
-            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoom.Name);
+            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoomJson.Name);
             try
             {
                 return _gameRoomsRepository.AddPlayer(new PlayerGame(){
-                    GameId = id, Role = role.Role, UserId = role.UserId});
+                    GameId = id, Role = role.Role, UserId = role.UserId}).ToJson();
             }
             catch (ArgumentException e)
             {
@@ -138,14 +138,14 @@ namespace MafiaGame.ServerApi.Controllers
         /// <summary>
         /// Обновление данных о пользователе
         /// </summary>
-        /// <param name="GameRoom">Новые данные пользователя</param>
+        /// <param name="GameRoomJson">Новые данные пользователя</param>
         /// <returns></returns>
         [HttpDelete]
-        [Route("api/game/{id}/delete")]
+        [Route("api/games/{id}/delete")]
         [ArgumentExceptionFilter]
         public void Delete(long gameId)
         {
-            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoom.Name);
+            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoomJson.Name);
             try
             {
                 _gameRoomsRepository.Delete(gameId);

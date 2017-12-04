@@ -34,7 +34,7 @@ namespace Mafiagame.DataLayer.Implementations
 
                 if (checkUser != default(User))
                 {
-                    throw new ArgumentException($"Пользователь с id ({id}) уже существует");
+                    throw new ArgumentException($"Пользователь с id{id} уже существует");
                 }
 
                 var user = new User()
@@ -72,7 +72,7 @@ namespace Mafiagame.DataLayer.Implementations
                     select u).FirstOrDefault();
 
                 if (user == default(User))
-                    throw new ArgumentException($"Пользователь с id {userId} не найден");
+                    throw new ArgumentException($"Пользователь с id{userId} не найден");
 
                 return user;
             }

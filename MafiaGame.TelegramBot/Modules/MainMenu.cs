@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
@@ -15,6 +16,7 @@ using System.Windows.Forms;
 using Mafiagame.DataLayer.Models;
 using MafiaGame.DataLayer.Models;
 using Telegram.Bot.Types.Enums;
+using TelegramBot.ClientApi;
 using TelegramBot.Kernel.Models;
 using TelegramBot.Modules.Generators;
 using Message = Telegram.Bot.Types.Message;
@@ -24,6 +26,7 @@ namespace TelegramBot.Modules
 
     public class MainMenu : ICommandsManager
     {
+        private MafiaService service = MafiaService.Create();
         public MainMenu()
         {
             AddInCommandCenter();
@@ -52,21 +55,24 @@ namespace TelegramBot.Modules
 
         private async void RegisterUserCallback(Message message, TelegramBotClient bot, object arg)
         {
-            var result = ClientApi.Register(message.Chat.Id).Result;
-            if (result.IsSuccessStatusCode)
+            try
             {
-                UserDatabase.AddUser(result.Content.ReadAsStringAsync().Result.FromJSON<MafiaGame.DataLayer.Models.User>());
-                await CommandsCenter.GetMenu("StartMenu")
-                    .ShowAsync(message.Chat.Id, bot, $"Добро пожаловать в мафию...");
+                UserDatabase.AddUser(service.Users.RegisterUserAsync(message.Chat.Id).Result);
             }
-
-            else await bot.SendTextMessageAsync(message.Chat.Id, $"{result.Content.ReadAsStringAsync().Result}", ParseMode.Markdown);
+            catch (HttpRequestException ex)
+            {
+                await bot.SendTextMessageAsync(message.Chat.Id, $"Ошибка при регистрации пользователя: {ex.Message}", ParseMode.Markdown);
+                return;
+            }
+            await CommandsCenter.GetMenu("StartMenu")
+                .ShowAsync(message.Chat.Id, bot, $"Добро пожаловать в мафию...");
         }
-        private void JoinGameCallback(Message message, TelegramBotClient Bot, object arg)
+        private async void JoinGameCallback(Message message, TelegramBotClient Bot, object arg)
         {
-            var res = ClientApi.GetAllGames().Result;
-            var games = res.Content.ReadAsStringAsync().Result.FromJSON<GameRoom[]>();
-            if (games.Length == 0)
+            var games = service.Games.GetAllGamesAsync().Result.Select(g => g.ToGameRoom())
+                        .ToArray();
+
+            if (!games.Any())
             {
                 var menu = new ReplyMenu("", true, new KeyboardButton[][]
                 {
@@ -80,20 +86,18 @@ namespace TelegramBot.Modules
                     }
                 });
 
-                Bot.SendTextMessageAsync(message.Chat.Id,
-                    "Список игр *пуст*. ",
+                await Bot.SendTextMessageAsync(message.Chat.Id,
+                    "Список игр *пуст* ",
                     ParseMode.Markdown, false, false, 0, menu.Keyboard);
                 return;
             }
 
             else
             {
-                new GamesListGenerator(games).GenerateMenu().ShowAsync(message.Chat.Id, Bot, "Список доступных игр");
+                await new GamesListGenerator(games).GenerateMenu().ShowAsync(message.Chat.Id, Bot, "Список доступных игр");
             }
         }
-        private void EnterRoomCallback(Message message, TelegramBotClient Bot, object arg)
-        {
-        }
+
         private void CreateGameCallback(Message message, TelegramBotClient Bot, object arg)
         {
             var user = UserDatabase.GetUser(message.Chat.Id);

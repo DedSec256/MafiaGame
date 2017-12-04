@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,6 +12,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineKeyboardButtons;
+using TelegramBot.ClientApi;
 using TelegramBot.Kernel;
 using TelegramBot.Kernel.Interfaces;
 using TelegramBot.Kernel.Models;
@@ -22,6 +24,7 @@ namespace TelegramBot.Modules
 {
     class AddRoles : ICommandsManager
     {
+        MafiaService service = MafiaService.Create();
         public AddRoles()
         {
             AddInCommandCenter();
@@ -47,7 +50,7 @@ namespace TelegramBot.Modules
 
         }
 
-        private void CreateGameCallback(Message message, TelegramBotClient Bot, object arg)
+        private async void CreateGameCallback(Message message, TelegramBotClient Bot, object arg)
         {
             var user = UserDatabase.GetUser(message.Chat.Id);
 
@@ -59,22 +62,23 @@ namespace TelegramBot.Modules
 
             else
             {
-                var res = ClientApi.CreateGame(GameRoom.CreateGameRoom(user.GameRoomCreation)).Result;
-                if (res.IsSuccessStatusCode)
+                GameRoom game = null;
+                try
                 {
-                    var game = res.Content.ReadAsStringAsync().Result.FromJSON<GameRoom>();
-                    user.SetGame(game.Id);
+                    game = service.Games
+                        .CreateGameAsync(GameRoom.CreateGameRoom(user.GameRoomCreation))
+                        .Result.ToGameRoom();
+                }
+                catch (HttpRequestException ex)
+                {
+                    await Bot.SendTextMessageAsync(message.Chat.Id,
+                        "Ошибка при создании игры 😢: " + ex.Message);
+                    return;
+                }
 
-                    Bot.SendTextMessageAsync(message.Chat.Id,
+                user.SetRoom(user.User.Id);
+                await Bot.SendTextMessageAsync(message.Chat.Id,
                         "Комната успешно создана!\n*Ожидание игроков...*", ParseMode.Markdown);
-                }
-                else
-                {
-                    Bot.SendTextMessageAsync(message.Chat.Id,
-                        "Ошибка при создании игры 😢: " + res.ReasonPhrase);
-                    
-                }
-                user.GameRoomCreation = null;
             }
         }
 
