@@ -69,6 +69,14 @@ namespace TelegramBot.Modules
         }
         private async void JoinGameCallback(Message message, TelegramBotClient Bot, object arg)
         {
+            var user = UserDatabase.GetUser(message.Chat.Id);
+            if (user.User.ActiveGameId != null)
+            {
+                await Bot.SendTextMessageAsync(message.Chat.Id,
+                    "Вы уже участвуете в игре. Закончите предыдущую игру или введите команду /exit",
+                    ParseMode.Markdown);
+                return;
+            }
             var games = service.Games.GetAllGamesAsync().Result.Select(g => g.ToGameRoom())
                         .ToArray();
 
@@ -98,13 +106,13 @@ namespace TelegramBot.Modules
             }
         }
 
-        private void CreateGameCallback(Message message, TelegramBotClient Bot, object arg)
+        private async void CreateGameCallback(Message message, TelegramBotClient Bot, object arg)
         {
             var user = UserDatabase.GetUser(message.Chat.Id);
 
             if (user.User.ActiveGameId!=null)
             {
-                Bot.SendTextMessageAsync(message.Chat.Id,
+                await Bot.SendTextMessageAsync(message.Chat.Id,
                     "Вы уже участвуете в игре. Закончите предыдущую игру или введите команду /exit",
                     ParseMode.Markdown);
                 return;
@@ -120,7 +128,7 @@ namespace TelegramBot.Modules
                     }
                 });
 
-                Bot.SendTextMessageAsync(message.Chat.Id,
+                await Bot.SendTextMessageAsync(message.Chat.Id,
                     "Введите *название* игры (до 20 символов):",
                     ParseMode.Markdown, false, false, 0, menu.Keyboard);
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Mafiagame.DataLayer.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -42,36 +43,50 @@ namespace TelegramBot.Modules
             var game = service.Games.GetGameAsync(user.User.ActiveGameId.Value).Result;
             if (game.Players.Count() == 1 || game.Id == user.User.ActiveGameId)
             {
-                bool done = service.Games.DeleteGameAsync(game.Id).Result;
-                UserDatabase.Broadcast(u => game.Players.Select(s => s.UserId == u.User.Id).Any(), 
-                    u => $"Администратор {game.Name} завершил игру", Bot);
-
-                if (done)
-                {
-                    await Bot.SendTextMessageAsync(message.Chat.Id, $"Игра *{game.Name}* успешно удалена!",
-                        ParseMode.Markdown);
-                }
-                else
-                {
-                    await Bot.SendTextMessageAsync(message.Chat.Id, $"Ошибка при удалении игры :c\nПовторите попытку позже",
-                        ParseMode.Markdown);
-                }
-                return;
+                DeleteGame(message, Bot, user, game);
             }
             else
             {
-                try
-                {
-                    await service.Games.DeletePlayerFromGame(game.Id, user.User.Id);
-                    await CommandsCenter.GetMenu("StartMenu").ShowAsync(message.Chat.Id, Bot,
-                        $"Ошибка при удалении игры :c\nПовторите попытку позже");
-                }
-                catch (HttpRequestException ex)
-                {
-                    await Bot.SendTextMessageAsync(message.Chat.Id, $"Не удалось выйти из игры {game.Name}: {ex.Message}",
-                        ParseMode.Markdown);
-                }
+                DeleteUser(message, Bot, user, game);
             }
+        }
+
+        private async void DeleteUser(Message message, TelegramBotClient Bot, LocalUser user, GameRoomJson game)
+        {
+            try
+            {
+                await service.Games.DeletePlayerFromGame(game.Id, user.User.Id);
+                await CommandsCenter.GetMenu("StartMenu").ShowAsync(message.Chat.Id, Bot,
+                    $"Вы успешно покинули игру.");
+                UserDatabase.Broadcast(u => game.Players.Select(s => s.UserId == u.User.Id).Any(),
+                    u => $"Игрок {message.From.Username} покинул игру", Bot);
+                user.SetRoom(null);
+            }
+            catch (HttpRequestException ex)
+            {
+                await Bot.SendTextMessageAsync(message.Chat.Id, $"Не удалось выйти из игры {game.Name}: {ex.Message}",
+                    ParseMode.Markdown);
+            }
+        }
+
+        private async void DeleteGame(Message message, TelegramBotClient Bot, LocalUser user, GameRoomJson game)
+        {
+            bool done = service.Games.DeleteGameAsync(game.Id).Result;
+            UserDatabase.Broadcast(u => game.Players.Select(s => s.UserId == u.User.Id).Any(),
+                u => $"Администратор {game.Name} завершил игру", Bot);
+            user.SetRoom(null);
+
+            if (done)
+            {
+                await Bot.SendTextMessageAsync(message.Chat.Id, $"Игра *{game.Name}* успешно удалена!",
+                    ParseMode.Markdown);
+            }
+            else
+            {
+                await Bot.SendTextMessageAsync(message.Chat.Id, $"Ошибка при удалении игры :c\nПовторите попытку позже",
+                    ParseMode.Markdown);
+            }
+            return;
         }
 
         public InGame()

@@ -188,6 +188,8 @@
     <Compile Include="Kernel\ExceptionIntercepter\ILogger.cs" />
     <Compile Include="Kernel\Models\Menus.cs" />
     <Compile Include="Modules\SystemModule.cs" />
+    <Compile Include="Modules\Systems\VoteSystem.cs" />
+    <Compile Include="Modules\Votes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

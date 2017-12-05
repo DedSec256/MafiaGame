@@ -16,6 +16,7 @@ namespace TelegramBot.Kernel.System
         public static BotSettings Settings { get; private set; }
         public const string DIRECTORY_PATH = "Data";
         private static readonly string SETTINGS_FILENAME;
+        public static readonly string VOTES_PATH;
 
         public static void InitalizeEnvironment()
         {
@@ -27,6 +28,10 @@ namespace TelegramBot.Kernel.System
                     {
                         writer.Write(Resources.SettingsTemplate);
                     }
+                }
+                if (!Directory.Exists(VOTES_PATH))
+                {
+                    Directory.CreateDirectory(VOTES_PATH);
                 }
             }
             catch (Exception ex)
@@ -46,6 +51,7 @@ namespace TelegramBot.Kernel.System
         {
             ConsoleEventHooker.Closed += ConsoleEventHooker_Closed;
             SETTINGS_FILENAME = Path.Combine(DIRECTORY_PATH, "settings.ini");
+            VOTES_PATH = Path.Combine(DIRECTORY_PATH, "Votes");
 
             UserDatabase.LoadUsers();
         }

@@ -77,8 +77,8 @@ namespace TelegramBot.Modules
                 }
 
                 user.SetRoom(user.User.Id);
-                await Bot.SendTextMessageAsync(message.Chat.Id,
-                        "Комната успешно создана!\n*Ожидание игроков...*", ParseMode.Markdown);
+                await CommandsCenter.GetMenu("ExitGameMenu").ShowAsync(message.Chat.Id, Bot,
+                        "Комната успешно создана!\n*Ожидание игроков...*");
             }
         }
 
