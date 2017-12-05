@@ -46,11 +46,16 @@ namespace TelegramBot.Modules
                 },
                 new KeyboardButton[]
                 {
-                    CommandsCenter.Add(new ReplyButton("👥 О боте", JoinGameCallback)).Button
+                    CommandsCenter.Add(new ReplyButton("👥 О боте", AboutCallback)).Button
                 }
-            }));
+            }, "Подсказка: чтобы выйти из текущей игры, нажмите /exit"));
 
             CommandsCenter.Add("/start", RegisterUserCallback);
+        }
+
+        private async void AboutCallback(Message message, TelegramBotClient Bot, object arg)
+        {
+            await CommandsCenter.GetMenu("AboutMenu").ShowAsync(message.Chat.Id, Bot, "Справка по *MafiaBot*:");
         }
 
         private async void RegisterUserCallback(Message message, TelegramBotClient bot, object arg)
@@ -65,7 +70,7 @@ namespace TelegramBot.Modules
                 return;
             }
             await CommandsCenter.GetMenu("StartMenu")
-                .ShowAsync(message.Chat.Id, bot, $"Добро пожаловать в мафию...");
+                .ShowAsync(message.Chat.Id, bot, $"Добро пожаловать в *мафию*...");
         }
         private async void JoinGameCallback(Message message, TelegramBotClient Bot, object arg)
         {
@@ -102,7 +107,7 @@ namespace TelegramBot.Modules
 
             else
             {
-                await new GamesListGenerator(games).GenerateMenu().ShowAsync(message.Chat.Id, Bot, "Список доступных игр");
+                await new GamesListGenerator(games).GenerateMenu().ShowAsync(message.Chat.Id, Bot, "Список доступных игр:");
             }
         }
 
@@ -143,7 +148,7 @@ namespace TelegramBot.Modules
             if (message.Text == "« Назад в главное меню")
             {
                 user.CommandRegex = LocalUser.DefaultRegex;
-                CommandsCenter.GetMenu("StartMenu").ShowAsync(message.Chat.Id, Bot, "");
+                CommandsCenter.GetMenu("StartMenu").ShowAsync(message.Chat.Id, Bot, "", true);
                 return;
             }
             else
@@ -186,21 +191,8 @@ namespace TelegramBot.Modules
             user.CommandRegex = LocalUser.DefaultRegex;
             user.GameRoomCreation.MaxPlayers = Byte.Parse(message.Text);
 
-            var menu = new ReplyMenu("", true, new KeyboardButton[][]
-            {
-                new KeyboardButton[]
-                {
-                    new KeyboardButton("« Назад в главное меню")
-                },
-                new KeyboardButton[]
-                {
-                    new KeyboardButton("🌘 Создать игру!")
-                }
-            });
-
             new RolesListGenerator(user.GameRoomCreation.Roles).GenerateMenu()
                 .ShowAsync(message.Chat.Id, Bot, user.GameRoomCreation.ToString(), true);
-            menu.ShowAsync(message.Chat.Id, Bot, "Выберите специальные роли:", true);
 
         }
         private void UncorrectMaxPlayersCallback(Message message, TelegramBotClient Bot, object arg)
@@ -210,7 +202,7 @@ namespace TelegramBot.Modules
             if (message.Text == "« Назад в главное меню")
             {
                 user.CommandRegex = LocalUser.DefaultRegex;
-                CommandsCenter.GetMenu("StartMenu").ShowAsync(message.Chat.Id, Bot);
+                CommandsCenter.GetMenu("StartMenu").ShowAsync(message.Chat.Id, Bot, "", true);
                 return;
             }
             else

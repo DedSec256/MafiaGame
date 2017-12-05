@@ -51,7 +51,7 @@ namespace MafiaGame.DataLayer.Tests
         [TestCleanup]
         public void CleanData()
         {
-            
+            MyTestInitialize();
         }
     }
 }

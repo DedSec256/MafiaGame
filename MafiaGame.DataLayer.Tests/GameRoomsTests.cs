@@ -63,5 +63,39 @@ namespace MafiaGame.DataLayer.Tests
             Assert.AreEqual(gameRoomRepository.GetAll().Count(), 0);
 
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void MaxPlayersTest()
+        {
+            var gameRoomRepository = new GameRoomRepository(ConnectionString);
+
+            for (int i = 1; i <= 11; i++)
+            {
+                userRepository.Create(i);
+            }
+
+            gameRoomRepository.Create(
+                GameRoom.CreateGameRoom(
+                    new GameRoomCreation()
+                    {
+                        AdminId = 1,
+                        MaxPlayers = 10,
+                        Name = $"testGame"
+                    }));
+
+            for (int i = 2; i <= 11; i++)
+            {
+                gameRoomRepository.AddPlayer(new PlayerGame()
+                { GameId = 1, Role = Roles.Dead.ToString(), UserId = i});
+            }
+
+        }
+
+        [TestCleanup]
+        public void CleanData()
+        {
+            MyTestInitialize();
+        }
     }
 }

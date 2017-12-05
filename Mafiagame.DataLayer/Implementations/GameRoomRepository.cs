@@ -27,6 +27,7 @@ namespace MafiaGame.DataLayer.Implementations
         {
             _connectionString = connectionString;
             _playersGamesRepository = new PlayersGamesRepository(_connectionString);
+            new UserRepository(connectionString);
         }
         public GameRoom Create(GameRoom room)
         {
@@ -47,6 +48,8 @@ namespace MafiaGame.DataLayer.Implementations
 
                 db.GetTable<GameRoom>().InsertOnSubmit(room);
                 db.SubmitChanges();
+
+                room.Players = GetGamePlayers(room.Id).Select(RoleFactory.GetRole);
                 return room;
             }
         }
@@ -81,7 +84,7 @@ namespace MafiaGame.DataLayer.Implementations
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "delete from Games where Id = @id";
+                    command.CommandText = "delete from GameRooms where Id = @id";
                     command.Parameters.AddWithValue("@id", gameId);
                     command.ExecuteNonQuery();
 
@@ -116,9 +119,15 @@ namespace MafiaGame.DataLayer.Implementations
                 if (gameFromDb == default(GameRoom))
                     throw new ArgumentException($"Игровая комната с id {game.GameId} не существует");
 
+                gameFromDb.Players = GetGamePlayers(game.GameId).Select(RoleFactory.GetRole);
+                if (gameFromDb.Players.Count() == gameFromDb.MaxPlayers)
+                {
+                    throw new ArgumentException($"В игре с id {game.GameId} максимум игроков");
+                }
+
+                _playersGamesRepository.Create(game);
                 /* Отправляем в Users Id новой игры */
                 UserEnterGame.Invoke(this, (game.UserId, game.GameId));
-                _playersGamesRepository.Create(game);
 
                 gameFromDb.Players = GetGamePlayers(game.GameId).Select(RoleFactory.GetRole);
                 return gameFromDb;
@@ -135,9 +144,9 @@ namespace MafiaGame.DataLayer.Implementations
                 if (gameFromDb == default(GameRoom))
                     throw new ArgumentException($"Игровая комната с id {gameId} не существует");
 
-                /* Отправляем в Users Id вышедшего польщователя */
-                UserExitGame.Invoke(this, userId);
                 _playersGamesRepository.Delete(userId);
+                /* Отправляем в Users Id вышедшего пользователя */
+                UserExitGame.Invoke(this, userId);
 
                 gameFromDb.Players = GetGamePlayers(gameId).Select(RoleFactory.GetRole);
                 return gameFromDb;

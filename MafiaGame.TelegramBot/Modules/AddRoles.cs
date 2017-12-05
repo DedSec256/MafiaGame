@@ -46,7 +46,7 @@ namespace TelegramBot.Modules
             CommandsCenter.Add(new InlineButton($"✅ Маньяк {Roles.Maniac.GetRoleIcon()}",
                 Roles.Maniac.ToString() + "Remove", AddRoleCallback));
 
-            CommandsCenter.Add(new ReplyButton("🌘 Создать игру!", CreateGameCallback));
+            CommandsCenter.Add(new InlineButton("🌘 Создать игру!","createGame", CreateGameCallback));
 
         }
 
@@ -68,8 +68,11 @@ namespace TelegramBot.Modules
                     game = service.Games
                         .CreateGameAsync(GameRoom.CreateGameRoom(user.GameRoomCreation))
                         .Result.ToGameRoom();
+
+                    CommandsCenter.Add(new InlineButton($"{game.Name}| {game.ActiveRoles} |{game.Players.Count() + "/" + game.MaxPlayers}",
+                        game.Id.ToString(), InGame.EnterRoomCallback));
                 }
-                catch (HttpRequestException ex)
+                catch (Exception ex)
                 {
                     await Bot.SendTextMessageAsync(message.Chat.Id,
                         "Ошибка при создании игры 😢: " + ex.Message);
@@ -79,6 +82,11 @@ namespace TelegramBot.Modules
                 user.SetRoom(user.User.Id);
                 await CommandsCenter.GetMenu("ExitGameMenu").ShowAsync(message.Chat.Id, Bot,
                         "Комната успешно создана!\n*Ожидание игроков...*");
+
+                Bot.ShowAnswerMessage((arg as CallbackQuery).Id,
+                    "На этом всё! :c\n\n" +
+                    "Увы, время защиты ограничено. Но не переживайте!\n" +
+                    "Подписывайтесь на бота и ждите обновлений!");
             }
         }
 

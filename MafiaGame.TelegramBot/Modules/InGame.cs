@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Mafiagame.DataLayer.Models;
+using MafiaGame.DataLayer.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -18,7 +19,7 @@ namespace TelegramBot.Modules
 {
     class InGame : ICommandsManager
     {
-        MafiaService service = MafiaService.Create();
+        private static MafiaService service = MafiaService.Create();
         public void AddInCommandCenter()
         {
             CommandsCenter.Add("/exit", ExitGameCallback);
@@ -73,13 +74,18 @@ namespace TelegramBot.Modules
         {
             bool done = service.Games.DeleteGameAsync(game.Id).Result;
             UserDatabase.Broadcast(u => game.Players.Select(s => s.UserId == u.User.Id).Any(),
-                u => $"Администратор {game.Name} завершил игру", Bot);
-            user.SetRoom(null);
+                u => $"Администратор *{game.Name}* завершил игру", Bot, CommandsCenter.GetMenu("StartMenu").Keyboard);
+
+            foreach (var u in game.Players)
+            {
+                UserDatabase.GetUser(u.UserId).SetRoom(null);
+            }
+
 
             if (done)
             {
-                await Bot.SendTextMessageAsync(message.Chat.Id, $"Игра *{game.Name}* успешно удалена!",
-                    ParseMode.Markdown);
+                await CommandsCenter.GetMenu("StartMenu")
+                    .ShowAsync(message.Chat.Id, Bot, $"Игра *{game.Name}* успешно удалена!");
             }
             else
             {
@@ -106,19 +112,35 @@ namespace TelegramBot.Modules
 
         }
 
-        public async void EnterRoomCallback(Message message, TelegramBotClient Bot, object arg)
+        public static  async void EnterRoomCallback(Message message, TelegramBotClient Bot, object arg)
         {
             var game = await service.Games.GetGameAsync(Int64.Parse((arg as CallbackQuery).Data));
+            try
+            {
+                await service.Games.AddPlayerInGame(game.Id,
+                    new JsonRole() {UserId = message.Chat.Id, Role = Roles.Dead.ToString()});
+            }
+            catch(HttpRequestException ex)
+            {
+                await Bot.SendTextMessageAsync(message.Chat.Id,
+                    $"Не удалось подключится к игре *{game.Name}*: {ex.Message}");
+                return;
+            }
+
+            UserDatabase.Broadcast(u => game.Players.Select(s => s.UserId == u.User.Id).Any(),
+                u => $"Игрок c *id{message.Chat.Id}* присоединился к игре...", Bot);
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"Добро пожаловать в *{game.Name}*!");
             sb.AppendLine($"Активные роли: {game.ActiveRoles}");
-            sb.AppendLine($"В игре: *{game.Players.Count()}/{game.MaxPlayers}* игроков");
+            sb.AppendLine($"В игре: *{game.Players.Count() + 1}/{game.MaxPlayers}* игроков");
 
             await CommandsCenter.GetMenu("ExitGameMenu").ShowAsync(message.Chat.Id, Bot, sb.ToString());
 
             Bot.ShowAnswerMessage((arg as CallbackQuery).Id,
-                "Вы зашли на сервер. Однако, для презентации проекта время ограничено, поэтому кина не будет");
+                "На этом всё! :c\n\n" +
+                "Увы, время защиты ограничено. Но не переживайте!\n" +
+                "Подписывайтесь на бота и ждите обновлений!");
         }
     }
 }

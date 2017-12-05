@@ -120,7 +120,7 @@ namespace TelegramBot.Kernel.Standart
                 else
                 {
                     await CommandsCenter.GetMenu("StartMenu")
-                        .ShowAsync(message.Chat.Id, bot, "инфо");
+                        .ShowAsync(message.Chat.Id, bot, "", true);
                 }
             }
             catch

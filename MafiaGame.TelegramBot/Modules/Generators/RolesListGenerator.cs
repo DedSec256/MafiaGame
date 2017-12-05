@@ -21,7 +21,7 @@ namespace TelegramBot.Modules.Generators
 
         public BotMenu GenerateMenu()
         {
-            InlineKeyboardButton[][] keyboard = new InlineKeyboardButton[3][];
+            InlineKeyboardButton[][] keyboard = new InlineKeyboardButton[4][];
             keyboard[0] = new InlineKeyboardButton[]
             {
                 !roles.Contains(Roles.Comissar.GetRoleIcon())
@@ -40,8 +40,12 @@ namespace TelegramBot.Modules.Generators
                     ? CommandsCenter.GetInlineButton(Roles.Maniac.ToString() + "Add").Button
                     : CommandsCenter.GetInlineButton(Roles.Maniac.ToString() + "Remove").Button
             };
+            keyboard[3] = new InlineKeyboardButton[]
+            {
+                CommandsCenter.GetInlineButton("createGame").Button
+            };
 
-            return new InlineMenu("", keyboard);
+            return new InlineMenu("Выберите специальные роли:", keyboard);
         }
     }
 }

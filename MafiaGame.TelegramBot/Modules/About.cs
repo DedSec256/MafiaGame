@@ -24,7 +24,7 @@ namespace TelegramBot.Modules
                 {
                     new InlineKeyboardButton[]
                     {
-                        new InlineKeyboardUrlButton("Правила игры", "http://analytic-spy.com/support")
+                        new InlineKeyboardUrlButton("Правила игры", "https://ru.wikipedia.org/wiki/Мафия_(игра)")
                     },
                     new InlineKeyboardButton[]
                     {

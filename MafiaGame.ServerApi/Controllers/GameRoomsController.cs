@@ -84,23 +84,6 @@ namespace MafiaGame.ServerApi.Controllers
         }
 
         [HttpGet]
-        [Route("api/games/{id}/players/{playerId}/delete")] 
-        [ArgumentExceptionFilter]
-        public GameRoomJson RemovePlayer(long id, [FromBody]long playerId)
-        {
-            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoomJson.Name);
-            try
-            {
-                return _gameRoomsRepository.RemovePlayer(id, playerId).ToJson();
-            }
-            catch (ArgumentException e)
-            {
-                //Logger.Log.Instance.Error(e.Message);
-                throw new ArgumentException(e.Message);
-            }
-        }
-
-        [HttpGet]
         [Route("api/games/{id}/players")]
         [ArgumentExceptionFilter]
         public IEnumerable<Role> GetPlayers(long id)
@@ -117,7 +100,7 @@ namespace MafiaGame.ServerApi.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("api/games/{id}/players/add")]
         [ArgumentExceptionFilter]
         public GameRoomJson AddPlayer(long id, [FromBody] JsonRole role)
@@ -135,6 +118,23 @@ namespace MafiaGame.ServerApi.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("api/games/{id}/players/{playerId}/delete")]
+        [ArgumentExceptionFilter]
+        public GameRoomJson RemovePlayer(long id, long playerId)
+        {
+            // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoomJson.Name);
+            try
+            {
+                return _gameRoomsRepository.RemovePlayer(id, playerId).ToJson();
+            }
+            catch (ArgumentException e)
+            {
+                //Logger.Log.Instance.Error(e.Message);
+                throw new ArgumentException(e.Message);
+            }
+        }
+
         /// <summary>
         /// Обновление данных о пользователе
         /// </summary>
@@ -143,12 +143,12 @@ namespace MafiaGame.ServerApi.Controllers
         [HttpDelete]
         [Route("api/games/{id}/delete")]
         [ArgumentExceptionFilter]
-        public void Delete(long gameId)
+        public void Delete(long id)
         {
             // Logger.Log.Instance.Info("Изменение пользователя с именем: {0}", GameRoomJson.Name);
             try
             {
-                _gameRoomsRepository.Delete(gameId);
+                _gameRoomsRepository.Delete(id);
             }
             catch (ArgumentException e)
             {
